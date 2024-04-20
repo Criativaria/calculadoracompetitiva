@@ -1,14 +1,19 @@
 import styled from 'styled-components/native';
-import { Check, Repeat, Volume2 } from 'lucide-react-native';
-import Options from './options';
+import { Coins, Repeat, Volume2 } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
+import * as Speech from 'expo-speech';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { View } from 'react-native';
 
 export default function Home() {
 
     const [query, setQuery] = useState('');
     const [options, setOptions] = useState([]);
     const [result, setResult] = useState()
-    const [reload, setReload] = useState(false)
+    const [reload, setReload] = useState(false);
+    const [border, setBorder] = useState();
+    const [points, setPoints] = useState(0);
+    const [level, setLevel] = useState('easy');
 
     function Question(level) {
 
@@ -36,9 +41,11 @@ export default function Home() {
 
             let question = ` ${num1}${operator}${num2}`;
             let answer = eval(question);
+
             Answer(answer);
             setResult(answer)
             setQuery(question);
+            textToSpeech(question, 1, 0.8);
         }
 
         function medium() {
@@ -61,6 +68,7 @@ export default function Home() {
             let answer = eval(question);
             Answer(answer);
             setQuery(question);
+            textToSpeech(question, 1, 0.8);
             setResult(answer)
         }
 
@@ -90,11 +98,11 @@ export default function Home() {
             answer = eval(question);
             setQuery(question);
             Answer(answer);
+            textToSpeech(question, 1, 0.8);
             setResult(answer)
-            return answer, question;
+
         }
     }
-
     function Answer(result) {
         function randomNumber(max, min) {
             return Math.round(Math.random() * (max - min) + min);
@@ -106,66 +114,132 @@ export default function Home() {
 
         isOptionUnique([option1, option2, option3, option4].sort(() => Math.random() - 0.5));
     }
-
     //pra checar se nao tem nenhuma opção igual a outra
     function isOptionUnique(alternative) {
         const optionsSet = new Set(alternative);
-
-        if (optionsSet < 4) {
-            Question('easy');
-        } else {
-            setOptions(Array.from(optionsSet));
-        }
-
+        while (optionsSet < 4) {
+            Question(level);
+        } setOptions(Array.from(optionsSet));
+        setTimeout(() => {
+            textToSpeech("as opções são: " + Array.from(optionsSet), 1, 0.8);
+        }, 3000);
     }
-
     function isRigthOne(option) {
-        console.log(option + "option")
-        console.log(result + "result")
+
         if (option === result) {
-            setReload(true)
-            //ele atualiza a pag mas não atualiza o state
+            textToSpeech(option + "é a correta!");
+            setTimeout(() => {
+                setReload(!reload);
+            }, 5000);
+
+            if (level == 'easy') {
+                setPoints(points + 10)
+                pointsStystem();
+            } else if (level == 'medium') {
+                setPoints(points + 20)
+                pointsStystem();
+            } else if (level == 'hard') {
+                setPoints(points + 200)
+                pointsStystem();
+            }
+        } else {
+            textToSpeech(option + "é errada!");
+            if (level == 'easy') {
+                setPoints(points - 3);
+                pointsStystem();
+            } else if (level == 'medium') {
+                setPoints(points - 5);
+                pointsStystem();
+            } else if (level == 'hard') {
+                setPoints(points - 100);
+                pointsStystem();
+
+            }
+        }
+
+        setBorder(option);
+
+    }
+    useEffect(() => {
+        Question(level);
+    }, [reload]);
+
+    function pointsStystem() {
+        if (points >= 50) {
+            setLevel('medium');
+        } else if (points >= 500) {
+            setLevel('hard');
         }
     }
 
-    useEffect(() => {
-        Question('easy');
-        setReload(false)
-    }, [reload == true])
+    function textToSpeech(text, pitch, rate) {
+        console.log(text, pitch, rate);
+        // Speech.speak(text, { pitch, rate });
+    }
+
+    //gesture things above that
+
+    const Pan = Gesture.Pan()
+        .onStart(() => {
+            console.log('Start Pan')
+        })
+    const Tap = Gesture.Tap()
+        .minPointers(2)
+        .onStart(() => {
+            console.log('Start Tap')
+        })
 
     return (
         <Wrapper>
-            <Sound>
-                <Volume2 size={32} color="#000000" />
-            </Sound>
-            <CalculatorWrapper>
-                <Calculator>
-                    <Display><PQuestion>{query}=?</PQuestion></Display>
-                    <OptionsWrapper>
-                        {
-                            options.map((option) =>
-                                <OptionButton key={option} onPress={() => isRigthOne(option)}>
-                                    <POption>
-                                        {option}
-                                    </POption>
-                                </OptionButton>
-                            )
-                        }
-                    </OptionsWrapper >
-                </Calculator>
-            </CalculatorWrapper>
-            <NavButtons>
-                <RepeatDiv><Repeat size={32} color="#000000" /></RepeatDiv>
-                <Confirm><Check size={32} color="#000000" /></Confirm>
-            </NavButtons>
-        </Wrapper >
+            <OnTop>
+                <CalculatorWrapper>
+                    <Calculator>
+                        <Escore>
+                            <Coins size={38} strokeWidth={2.25} color="#ffe100" />
+                            <PointsText>{points}</PointsText>
+                        </Escore>
+                        <Display><PQuestion>{query}=?</PQuestion></Display>
+                        <OptionsWrapper>
+                            {
+                                options.map((option) =>
+                                    <OptionButton style={{
+                                        borderLeftWidth: border == option ? 10 : 0,
+                                        borderLeftColor: option == result ? '#9EA93F' : '#E03E3E'
+                                    }} key={option} onPress={() => isRigthOne(option)}>
+                                        <POption>
+                                            {option}
+                                        </POption>
+                                    </OptionButton>
+                                )
+                            }
+                        </OptionsWrapper >
+                    </Calculator>
+                </CalculatorWrapper>
+                <NavButtons>
+                    <RepeatDiv><Repeat size={32} color="#000000" /></RepeatDiv>
+                </NavButtons>
+            </OnTop>
+        </Wrapper>
     )
 }
-
+const OnTop = styled.View`
+    background-color: red;
+    position: absolute;
+    z-index: 999;
+`
+const Escore = styled.View`
+    flex-direction: row;
+    align-items: center;
+`
+const PointsText = styled.Text`
+    color: #ffe100;
+    font-family: RobotoMono_500Medium;
+    font-size: 20px;
+`
 const PQuestion = styled.Text`
+    font-size: 50px;
     color: black;
     font-family: RobotoMono_500Medium;
-    font-size: 50px;
 `
 const POption = styled.Text`
     color: black;
@@ -188,11 +262,10 @@ const OptionButton = styled.Pressable`
     justify-content: center;
 `
 const Wrapper = styled.View`
-    flex: 1;
     align-items: center;
-`
-const Sound = styled.View`
-    margin-top: 30px;
+    justify-content: center;
+    position: relative;
+    height: 100%;
 `
 const CalculatorWrapper = styled.View`
     background-color: #181F1C;
@@ -208,6 +281,7 @@ const Calculator = styled.View`
     width: 325px;
     height: 610px;
     border-radius: 30px;
+    padding-top: 10px;
     align-items: center;
 `
 const Display = styled.View`
@@ -233,11 +307,3 @@ const RepeatDiv = styled.Pressable`
     align-items: center;
     justify-content: center;
     `
-const Confirm = styled.Pressable`
-    width: 170px;
-    height: 60px;
-    background-color: #9EA93F;
-    border-radius: 10px;
-    align-items: center;
-    justify-content: center;
-`

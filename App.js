@@ -2,6 +2,8 @@ import { View } from 'react-native';
 import { useFonts, RobotoMono_500Medium } from '@expo-google-fonts/roboto-mono';
 import Home from './components/home';
 import Question from './components/question';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import GestureTest from './components/GestureTest';
 
 export default function App() {
   let [fontsLoaded] = useFonts({
@@ -12,9 +14,9 @@ export default function App() {
     return null;
   }
   return (
-    <View>
+    <GestureHandlerRootView>
       <Home />
-    </View>
+    </GestureHandlerRootView>
   );
 }
 
