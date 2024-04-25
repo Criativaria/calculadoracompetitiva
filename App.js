@@ -4,6 +4,8 @@ import Home from './components/home';
 import Question from './components/question';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import GestureTest from './components/GestureTest';
+import Score from './components/score';
+import Form from './components/form';
 
 export default function App() {
   let [fontsLoaded] = useFonts({

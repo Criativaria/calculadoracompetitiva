@@ -14,6 +14,9 @@ export default function Home() {
     const [border, setBorder] = useState();
     const [points, setPoints] = useState(0);
     const [level, setLevel] = useState('easy');
+    const [background, setBackground] = useState('#181F1C');
+    const [color, setColor] = useState('#315C2B');
+    const [a, setA] = useState()
 
     function Question(level) {
 
@@ -45,7 +48,7 @@ export default function Home() {
             Answer(answer);
             setResult(answer)
             setQuery(question);
-            textToSpeech(question, 1, 0.8);
+            textToSpeech(question, 1);
         }
 
         function medium() {
@@ -68,7 +71,7 @@ export default function Home() {
             let answer = eval(question);
             Answer(answer);
             setQuery(question);
-            textToSpeech(question, 1, 0.8);
+            textToSpeech(question, 1);
             setResult(answer)
         }
 
@@ -98,7 +101,7 @@ export default function Home() {
             answer = eval(question);
             setQuery(question);
             Answer(answer);
-            textToSpeech(question, 1, 0.8);
+            textToSpeech(question, 1);
             setResult(answer)
 
         }
@@ -121,7 +124,7 @@ export default function Home() {
             Question(level);
         } setOptions(Array.from(optionsSet));
         setTimeout(() => {
-            textToSpeech("as opções são: " + Array.from(optionsSet), 1, 0.8);
+            textToSpeech("as opções são: " + Array.from(optionsSet), 0.8);
         }, 3000);
     }
     function isRigthOne(option) {
@@ -165,37 +168,64 @@ export default function Home() {
     }, [reload]);
 
     function pointsStystem() {
-        if (points >= 50) {
-            setLevel('medium');
-        } else if (points >= 500) {
-            setLevel('hard');
+        if (points > 500) {
+            setBackground('#540B0E')
+            setColor('#9E2A2B')
+            setLevel('hard')
+        }
+        if (points > 50 && points < 500) {
+            setBackground('#7C7000')
+            setColor('#E09F3E')
+            setLevel('medium')
+        }
+        if (points < 50) {
+            setBackground('#181F1C')
+            setColor('#315C2B')
+            setLevel('easy')
         }
     }
-
-    function textToSpeech(text, pitch, rate) {
-        console.log(text, pitch, rate);
-        // Speech.speak(text, { pitch, rate });
+    function textToSpeech(text, rate) {
+        Speech.speak(text, { rate });
     }
 
-    //gesture things above that
+    //gesture things below that
+
+
+    // function ArraySplit() {
+    //     if (i >= options.length) {
+    //         setI(0)
+    //     }
+    //     const option = options[i];
+    //     i++
+    //     setA(option)
+    // }
 
     const Pan = Gesture.Pan()
-        .onStart(() => {
-            console.log('Start Pan')
-        })
-    const Tap = Gesture.Tap()
-        .minPointers(2)
-        .onStart(() => {
-            console.log('Start Tap')
+        .onEnd(() => {
+            if (a >= options.length) {
+                setA(0)
+            } else {
+                setA(a + 1)
+                const o = options[a];
+                console.log(a)
+                console.log(o)
+            }
+
         })
 
+    // const Tap = Gesture.Tap()
+    //     .minPointers(2)
+    //     .onStart(() => {
+    //         console.log('Start Tap')
+    //     })
+
     return (
-        <Wrapper>
-            <OnTop>
-                <CalculatorWrapper>
-                    <Calculator>
+        <GestureDetector gesture={Pan}>
+            <Wrapper>
+                <CalculatorWrapper style={{ backgroundColor: `${background}` }}>
+                    <Calculator style={{ backgroundColor: `${color}` }}>
                         <Escore>
-                            <Coins size={38} strokeWidth={2.25} color="#ffe100" />
+                            <Coins size={38} strokeWidth={2.25} color="#000000" />
                             <PointsText>{points}</PointsText>
                         </Escore>
                         <Display><PQuestion>{query}=?</PQuestion></Display>
@@ -212,27 +242,31 @@ export default function Home() {
                                     </OptionButton>
                                 )
                             }
-                        </OptionsWrapper >
+                        </OptionsWrapper>
                     </Calculator>
                 </CalculatorWrapper>
-                <NavButtons>
-                    <RepeatDiv><Repeat size={32} color="#000000" /></RepeatDiv>
-                </NavButtons>
-            </OnTop>
-        </Wrapper>
+                <OnTop>
+                </OnTop>
+            </Wrapper>
+        </GestureDetector>
     )
 }
 const OnTop = styled.View`
-    background-color: red;
+    background-color: transparent; 
     position: absolute;
-    z-index: 999;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
 `
 const Escore = styled.View`
     flex-direction: row;
     align-items: center;
 `
 const PointsText = styled.Text`
-    color: #ffe100;
+    color: #000000;
     font-family: RobotoMono_500Medium;
     font-size: 20px;
 `
@@ -266,23 +300,24 @@ const Wrapper = styled.View`
     justify-content: center;
     position: relative;
     height: 100%;
+    background-color: #1E1E1E;
 `
 const CalculatorWrapper = styled.View`
-    background-color: #181F1C;
     width: 370px;
     height: 640px;
     border-radius: 30px;
     align-items: center;
     justify-content: center;
     margin-top: 40px;
+    transition: 0.5s;
 `
 const Calculator = styled.View`
-    background-color: #315C2B;
     width: 325px;
     height: 610px;
     border-radius: 30px;
     padding-top: 10px;
     align-items: center;
+    transition: 0.5s;
 `
 const Display = styled.View`
     width: 300px;
@@ -306,4 +341,4 @@ const RepeatDiv = styled.Pressable`
     border-radius: 10px;
     align-items: center;
     justify-content: center;
-    `
+`
