@@ -2,7 +2,7 @@ import { Coins } from "lucide-react-native"
 import { GestureDetector } from "react-native-gesture-handler"
 import styled from "styled-components"
 
-export default function Score() {
+export default function ScorePoints() {
     return (
 
         <Wrapper>

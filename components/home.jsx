@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import { Coins, Repeat, Volume2 } from 'lucide-react-native';
+import { Coins, ListOrdered, Repeat, Volume2 } from 'lucide-react-native';
 import { useEffect, useRef, useState } from 'react';
 import * as Speech from 'expo-speech';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -206,7 +206,6 @@ export default function Home() {
         console.log(selectedOption)
     }
     const Pan = Gesture.Pan().onEnd(handlePan);
-
     const Tap = Gesture.Tap().minPointers(2).onEnd(handleTap)
 
     return (
@@ -236,6 +235,11 @@ export default function Home() {
                             </OptionsWrapper>
                         </Calculator>
                     </CalculatorWrapper>
+                    <NavButtons>
+                        <RepeatDiv>
+                            <ListOrdered size={48} strokeWidth={1.50} color="#ffffff" />
+                        </RepeatDiv>
+                    </NavButtons>
                     <OnTop>
                     </OnTop>
                 </Wrapper>
@@ -320,11 +324,10 @@ const Display = styled.View`
     align-items: center;
     justify-content: center;
 `
-const NavButtons = styled.View`
+const NavButtons = styled.Pressable`
     flex-direction: row;
     gap: 20px;
     justify-content: center;
-    margin-top: 20px;
 `
 const RepeatDiv = styled.Pressable`
     width: 170px;

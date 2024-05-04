@@ -1,11 +1,9 @@
-import { View } from 'react-native';
+import * as React from 'react';
 import { useFonts, RobotoMono_500Medium } from '@expo-google-fonts/roboto-mono';
-import Home from './components/home';
-import Question from './components/question';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import GestureTest from './components/GestureTest';
-import Score from './components/score';
-import Form from './components/form';
+import { NavigationContainer } from '@react-navigation/native';
+import Router from './components/router/router';
+
 
 export default function App() {
   let [fontsLoaded] = useFonts({
@@ -17,7 +15,9 @@ export default function App() {
   }
   return (
     <GestureHandlerRootView>
-      <Home />
+      <NavigationContainer>
+        <Router />
+      </NavigationContainer>
     </GestureHandlerRootView>
   );
 }
