@@ -205,46 +205,49 @@ export default function Home() {
         isRigthOne(selectedOption)
         console.log(selectedOption)
     }
+
     const Pan = Gesture.Pan().onEnd(handlePan);
     const Tap = Gesture.Tap().minPointers(2).onEnd(handleTap)
 
     return (
-        <GestureDetector gesture={Pan}>
-            <GestureDetector gesture={Tap}>
-                <Wrapper>
-                    <CalculatorWrapper style={{ backgroundColor: `${background}` }}>
-                        <Calculator style={{ backgroundColor: `${color}` }}>
-                            <Escore>
-                                <Coins size={38} strokeWidth={2.25} color="#000000" />
-                                <PointsText>{points}</PointsText>
-                            </Escore>
-                            <Display><PQuestion>{query}=?</PQuestion></Display>
-                            <OptionsWrapper>
-                                {
-                                    options.map((option) =>
-                                        <OptionButton style={{
-                                            borderLeftWidth: border == option ? 10 : 0,
-                                            borderLeftColor: option == result ? '#9EA93F' : '#E03E3E'
-                                        }} key={option} onPress={() => isRigthOne(option)}>
-                                            <POption>
-                                                {option}
-                                            </POption>
-                                        </OptionButton>
-                                    )
-                                }
-                            </OptionsWrapper>
-                        </Calculator>
-                    </CalculatorWrapper>
-                    <NavButtons>
-                        <RepeatDiv>
-                            <ListOrdered size={48} strokeWidth={1.50} color="#ffffff" />
-                        </RepeatDiv>
-                    </NavButtons>
-                    <OnTop>
-                    </OnTop>
-                </Wrapper>
+        <GestureHandlerRootView>
+            <GestureDetector gesture={Pan}>
+                <GestureDetector gesture={Tap}>
+                    <Wrapper>
+                        <CalculatorWrapper style={{ backgroundColor: `${background}` }}>
+                            <Calculator style={{ backgroundColor: `${color}` }}>
+                                <Escore>
+                                    <Coins size={38} strokeWidth={2.25} color="#000000" />
+                                    <PointsText>{points}</PointsText>
+                                </Escore>
+                                <Display><PQuestion>{query}=?</PQuestion></Display>
+                                <OptionsWrapper>
+                                    {
+                                        options.map((option) =>
+                                            <OptionButton style={{
+                                                borderLeftWidth: border == option ? 10 : 0,
+                                                borderLeftColor: option == result ? '#9EA93F' : '#E03E3E'
+                                            }} key={option} onPress={() => isRigthOne(option)}>
+                                                <POption>
+                                                    {option}
+                                                </POption>
+                                            </OptionButton>
+                                        )
+                                    }
+                                </OptionsWrapper>
+                            </Calculator>
+                        </CalculatorWrapper>
+                        <NavButtons>
+                            <RepeatDiv>
+                                <ListOrdered size={48} strokeWidth={1.50} color="#ffffff" />
+                            </RepeatDiv>
+                        </NavButtons>
+                        <OnTop>
+                        </OnTop>
+                    </Wrapper>
+                </GestureDetector>
             </GestureDetector>
-        </GestureDetector>
+        </GestureHandlerRootView>
     )
 }
 const OnTop = styled.View`

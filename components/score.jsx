@@ -6,6 +6,7 @@ export default function ScorePoints() {
     return (
 
         <Wrapper>
+
             <CalculatorWrapper>
                 <Calculator>
                     <Escore>
@@ -33,6 +34,7 @@ export default function ScorePoints() {
             <OnTop>
             </OnTop>
         </Wrapper>
+
     )
 }
 const Player = styled.View`
