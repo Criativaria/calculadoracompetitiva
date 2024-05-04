@@ -2,9 +2,7 @@ import styled from 'styled-components/native';
 import { Coins, Repeat, Volume2 } from 'lucide-react-native';
 import { useEffect, useRef, useState } from 'react';
 import * as Speech from 'expo-speech';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { View } from 'react-native';
-import { runOnJS } from 'react-native-reanimated'
+import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function Home() {
 
@@ -17,6 +15,7 @@ export default function Home() {
     const [level, setLevel] = useState('easy');
     const [background, setBackground] = useState('#181F1C');
     const [color, setColor] = useState('#315C2B');
+    const [selectedOption, setSelectedOption] = useState(0);
 
     function Question(level) {
 
@@ -123,7 +122,7 @@ export default function Home() {
             Question(level);
         } setOptions(Array.from(optionsSet));
         setTimeout(() => {
-            textToSpeech("as opções são: " + Array.from(optionsSet), 0.8);
+            textToSpeech("as opções são: " + Array.from(optionsSet), 0.7);
         }, 3000);
     }
     function isRigthOne(option) {
@@ -191,48 +190,56 @@ export default function Home() {
 
     const countRef = useRef(0);
 
-    const handleGestureEvent = () => {
+    const handlePan = () => {
         countRef.current += 1;
         if (options.length <= countRef.current - 1) {
             countRef.current = 0
-            console.log("test", countRef.current - 1);
             return options[countRef.current - 1]
         } else {
             textToSpeech(options[countRef.current - 1].toString(), 1)
-            console.log(options[countRef.current - 1]);
+            setSelectedOption(options[countRef.current - 1]);
         }
     }
-    const Pan = Gesture.Pan().onEnd(handleGestureEvent);
+
+    const handleTap = () => {
+        isRigthOne(selectedOption)
+        console.log(selectedOption)
+    }
+    const Pan = Gesture.Pan().onEnd(handlePan);
+
+    const Tap = Gesture.Tap().minPointers(2).onEnd(handleTap)
 
     return (
         <GestureDetector gesture={Pan}>
-            <Wrapper>
-                <CalculatorWrapper style={{ backgroundColor: `${background}` }}>
-                    <Calculator style={{ backgroundColor: `${color}` }}>
-                        <Escore>
-                            <Coins size={38} strokeWidth={2.25} color="#000000" />
-                            <PointsText>{points}</PointsText>
-                        </Escore>
-                        <Display><PQuestion>{query}=?</PQuestion></Display>
-                        <OptionsWrapper>
-                            {
-                                options.map((option) =>
-                                    <OptionButton style={{
-                                        borderLeftWidth: border == option ? 10 : 0,
-                                        borderLeftColor: option == result ? '#9EA93F' : '#E03E3E'
-                                    }} key={option} onPress={() => isRigthOne(option)}>
-                                        <POption>
-                                            {option}
-                                        </POption>
-                                    </OptionButton>
-                                )
-                            }
-                        </OptionsWrapper>
-                    </Calculator>
-                </CalculatorWrapper>
-                <OnTop>
-                </OnTop>
-            </Wrapper>
+            <GestureDetector gesture={Tap}>
+                <Wrapper>
+                    <CalculatorWrapper style={{ backgroundColor: `${background}` }}>
+                        <Calculator style={{ backgroundColor: `${color}` }}>
+                            <Escore>
+                                <Coins size={38} strokeWidth={2.25} color="#000000" />
+                                <PointsText>{points}</PointsText>
+                            </Escore>
+                            <Display><PQuestion>{query}=?</PQuestion></Display>
+                            <OptionsWrapper>
+                                {
+                                    options.map((option) =>
+                                        <OptionButton style={{
+                                            borderLeftWidth: border == option ? 10 : 0,
+                                            borderLeftColor: option == result ? '#9EA93F' : '#E03E3E'
+                                        }} key={option} onPress={() => isRigthOne(option)}>
+                                            <POption>
+                                                {option}
+                                            </POption>
+                                        </OptionButton>
+                                    )
+                                }
+                            </OptionsWrapper>
+                        </Calculator>
+                    </CalculatorWrapper>
+                    <OnTop>
+                    </OnTop>
+                </Wrapper>
+            </GestureDetector>
         </GestureDetector>
     )
 }
