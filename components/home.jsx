@@ -1,10 +1,11 @@
 import styled from 'styled-components/native';
-import { Coins, ListOrdered, Repeat, Volume2 } from 'lucide-react-native';
-import { useEffect, useRef, useState } from 'react';
+import {Coins, ListOrdered, Repeat, Volume2} from 'lucide-react-native';
+import {useEffect, useRef, useState} from 'react';
 import * as Speech from 'expo-speech';
-import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
+import {Gesture, GestureDetector, GestureHandlerRootView} from 'react-native-gesture-handler';
+import {TouchableOpacity, Text} from "react-native";
 
-export default function Home() {
+export default function Home({navigation}) {
 
     const [query, setQuery] = useState('');
     const [options, setOptions] = useState([]);
@@ -32,6 +33,7 @@ export default function Home() {
             default:
                 break;
         }
+
         function randomNumber(max, min) {
             return Math.round(Math.random() * (max - min) + min);
         }
@@ -88,13 +90,12 @@ export default function Home() {
 
             if (operator1 == '/') {
                 if (num2 != 0) {
-                    result = Math.floor(eval(`${num1}*${num2}`));
+                    result = Math.floor(eval(`${num1} * ${num2}`));
                     question = `${result}/${num2}${operator2}${num3}`
                 } else {
                     return;
                 }
-            }
-            else {
+            } else {
                 question = `${num1}${operator1}${num2}${operator2}${num3}`;
             }
             answer = eval(question);
@@ -105,10 +106,12 @@ export default function Home() {
 
         }
     }
+
     function Answer(result) {
         function randomNumber(max, min) {
             return Math.round(Math.random() * (max - min) + min);
         }
+
         let option1 = result
         let option2 = result + randomNumber(10, 1)
         let option3 = result - randomNumber(16, 1)
@@ -116,15 +119,18 @@ export default function Home() {
 
         isOptionUnique([option1, option2, option3, option4].sort(() => Math.random() - 0.5));
     }
+
     function isOptionUnique(alternative) {
         const optionsSet = new Set(alternative);
         while (optionsSet < 4) {
             Question(level);
-        } setOptions(Array.from(optionsSet));
+        }
+        setOptions(Array.from(optionsSet));
         setTimeout(() => {
             textToSpeech("as opções são: " + Array.from(optionsSet), 0.7);
         }, 3000);
     }
+
     function isRigthOne(option) {
 
         if (option === result) {
@@ -161,6 +167,7 @@ export default function Home() {
         setBorder(option);
 
     }
+
     useEffect(() => {
         Question(level);
     }, [reload]);
@@ -182,8 +189,9 @@ export default function Home() {
             setLevel('easy')
         }
     }
+
     function textToSpeech(text, rate) {
-        return Speech.speak(text, { rate });
+        return Speech.speak(text, {rate});
     }
 
     //gesture things below that
@@ -209,46 +217,59 @@ export default function Home() {
     const Tap = Gesture.Tap().minPointers(2).onEnd(handleTap)
 
     return (
-        <GestureDetector gesture={Pan}>
-            <GestureDetector gesture={Tap}>
-                <Wrapper>
-                    <CalculatorWrapper style={{ backgroundColor: `${background}` }}>
-                        <Calculator style={{ backgroundColor: `${color}` }}>
-                            <Escore>
-                                <Coins size={38} strokeWidth={2.25} color="#000000" />
-                                <PointsText>{points}</PointsText>
-                            </Escore>
-                            <Display><PQuestion>{query}=?</PQuestion></Display>
-                            <OptionsWrapper>
-                                {
-                                    options.map((option) =>
-                                        <OptionButton style={{
-                                            borderLeftWidth: border == option ? 10 : 0,
-                                            borderLeftColor: option == result ? '#9EA93F' : '#E03E3E'
-                                        }} key={option} onPress={() => isRigthOne(option)}>
-                                            <POption>
-                                                {option}
-                                            </POption>
-                                        </OptionButton>
-                                    )
-                                }
-                            </OptionsWrapper>
-                        </Calculator>
-                    </CalculatorWrapper>
-                    <NavButtons>
-                        <RepeatDiv>
-                            <ListOrdered size={48} strokeWidth={1.50} color="#ffffff" />
-                        </RepeatDiv>
-                    </NavButtons>
-                    <OnTop>
-                    </OnTop>
-                </Wrapper>
+<>
+    <TouchableOpacity onPress={() => navigation.navigate("Score")}>
+        <Text>
+            Navegar
+        </Text>
+    </TouchableOpacity>
+        <GestureHandlerRootView>
+
+            <GestureDetector gesture={Pan}>
+                <GestureDetector gesture={Tap}>
+                    <Wrapper>
+                        <CalculatorWrapper style={{backgroundColor: `${background}`}}>
+                            <Calculator style={{backgroundColor: `${color}`}}>
+                                <Escore>
+                                    <Coins size={38} strokeWidth={2.25} color="#000000"/>
+                                    <PointsText>{points}</PointsText>
+                                </Escore>
+
+                                <Display><PQuestion>{query}=?</PQuestion></Display>
+                                <OptionsWrapper>
+                                    {
+                                        options.map((option) =>
+                                            <OptionButton style={{
+                                                borderLeftWidth: border == option ? 10 : 0,
+                                                borderLeftColor: option == result ? '#9EA93F' : '#E03E3E'
+                                            }} key={option} onPress={() => isRigthOne(option)}>
+                                                <POption>
+                                                    {option}
+                                                </POption>
+                                            </OptionButton>
+                                        )
+                                    }
+                                </OptionsWrapper>
+                            </Calculator>
+                        </CalculatorWrapper>
+                        <NavButtons>
+                            <RepeatDiv>
+                                <ListOrdered size={48} strokeWidth={1.50} color="#ffffff"/>
+                            </RepeatDiv>
+                        </NavButtons>
+                        <OnTop>
+                        </OnTop>
+                    </Wrapper>
+                </GestureDetector>
             </GestureDetector>
-        </GestureDetector>
+        </GestureHandlerRootView>
+</>
+
+
     )
 }
 const OnTop = styled.View`
-    background-color: transparent; 
+    background-color: transparent;
     position: absolute;
     z-index: 1;
     display: flex;
