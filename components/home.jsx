@@ -1,9 +1,10 @@
 import styled from 'styled-components/native';
 import { Coins, Repeat, Volume2 } from 'lucide-react-native';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as Speech from 'expo-speech';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { View } from 'react-native';
+import { runOnJS } from 'react-native-reanimated'
 
 export default function Home() {
 
@@ -16,7 +17,6 @@ export default function Home() {
     const [level, setLevel] = useState('easy');
     const [background, setBackground] = useState('#181F1C');
     const [color, setColor] = useState('#315C2B');
-    const [a, setA] = useState()
 
     function Question(level) {
 
@@ -117,7 +117,6 @@ export default function Home() {
 
         isOptionUnique([option1, option2, option3, option4].sort(() => Math.random() - 0.5));
     }
-    //pra checar se nao tem nenhuma opção igual a outra
     function isOptionUnique(alternative) {
         const optionsSet = new Set(alternative);
         while (optionsSet < 4) {
@@ -185,39 +184,25 @@ export default function Home() {
         }
     }
     function textToSpeech(text, rate) {
-        Speech.speak(text, { rate });
+        return Speech.speak(text, { rate });
     }
 
     //gesture things below that
 
+    const countRef = useRef(0);
 
-    // function ArraySplit() {
-    //     if (i >= options.length) {
-    //         setI(0)
-    //     }
-    //     const option = options[i];
-    //     i++
-    //     setA(option)
-    // }
-
-    const Pan = Gesture.Pan()
-        .onEnd(() => {
-            if (a >= options.length) {
-                setA(0)
-            } else {
-                setA(a + 1)
-                const o = options[a];
-                console.log(a)
-                console.log(o)
-            }
-
-        })
-
-    // const Tap = Gesture.Tap()
-    //     .minPointers(2)
-    //     .onStart(() => {
-    //         console.log('Start Tap')
-    //     })
+    const handleGestureEvent = () => {
+        countRef.current += 1;
+        if (options.length <= countRef.current - 1) {
+            countRef.current = 0
+            console.log("test", countRef.current - 1);
+            return options[countRef.current - 1]
+        } else {
+            textToSpeech(options[countRef.current - 1].toString(), 1)
+            console.log(options[countRef.current - 1]);
+        }
+    }
+    const Pan = Gesture.Pan().onEnd(handleGestureEvent);
 
     return (
         <GestureDetector gesture={Pan}>
