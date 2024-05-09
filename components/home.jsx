@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import * as Speech from 'expo-speech';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 
-export default function Home() {
+export default function Home({ navigation }) {
 
     const [query, setQuery] = useState('');
     const [options, setOptions] = useState([]);
@@ -16,6 +16,7 @@ export default function Home() {
     const [background, setBackground] = useState('#181F1C');
     const [color, setColor] = useState('#315C2B');
     const [selectedOption, setSelectedOption] = useState(0);
+
 
     function Question(level) {
 
@@ -237,11 +238,9 @@ export default function Home() {
                                 </OptionsWrapper>
                             </Calculator>
                         </CalculatorWrapper>
-                        <NavButtons>
-                            <RepeatDiv>
-                                <ListOrdered size={48} strokeWidth={1.50} color="#ffffff" />
-                            </RepeatDiv>
-                        </NavButtons>
+                        {/* <NavButtons onPress={() => navigation.navigate('Score')}>
+                            <ListOrdered size={48} strokeWidth={1.50} color="#FCFFEB" />
+                        </NavButtons> */}
                         <OnTop>
                         </OnTop>
                     </Wrapper>
@@ -332,11 +331,11 @@ const NavButtons = styled.Pressable`
     gap: 20px;
     justify-content: center;
 `
-const RepeatDiv = styled.Pressable`
-    width: 170px;
-    height: 60px;
-    background-color: #E3D26F;
-    border-radius: 10px;
-    align-items: center;
-    justify-content: center;
-`
+// const RepeatDiv = styled.Pressable`
+//     width: 170px;
+//     height: 60px;
+//     background-color: #FCFFEB;
+//     border-radius: 10px;
+//     align-items: center;
+//     justify-content: center;
+// `

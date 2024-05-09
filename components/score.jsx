@@ -1,8 +1,8 @@
-import { Coins } from "lucide-react-native"
+import { CalculatorIcon, Coins } from "lucide-react-native"
 import { GestureDetector } from "react-native-gesture-handler"
 import styled from "styled-components"
 
-export default function ScorePoints() {
+export default function ScorePoints({ navigation }) {
     return (
 
         <Wrapper>
@@ -31,8 +31,11 @@ export default function ScorePoints() {
                     </PlayersWrapper>
                 </Calculator>
             </CalculatorWrapper>
-            <OnTop>
-            </OnTop>
+            <NavButtons onPress={() => navigation.navigate('Home')}>
+                <CalculatorIcon size={48} strokeWidth={1.50} color="#FCFFEB" />
+            </NavButtons>
+            {/* <OnTop>
+            </OnTop> */}
         </Wrapper>
 
     )
@@ -87,9 +90,10 @@ const Wrapper = styled.View`
     justify-content: center;
     position: relative;
     height: 100%;
+    background-color: #1E1E1E;
 `
 const CalculatorWrapper = styled.View`
-    background-color: #1E1E1E;
+    background-color: #D9D9D9;
     width: 370px;
     height: 640px;
     border-radius: 30px;
@@ -99,6 +103,7 @@ const CalculatorWrapper = styled.View`
     transition: 0.5s;
 `
 const Calculator = styled.View`
+    border: 5px solid black;
     background-color: #D9D9D9;
     width: 325px;
     height: 610px;
@@ -106,4 +111,10 @@ const Calculator = styled.View`
     padding-top: 10px;
     align-items: center;
     transition: 0.5s;
+`
+const NavButtons = styled.Pressable`
+    margin-top: 25px;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: center;
 `

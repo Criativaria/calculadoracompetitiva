@@ -1,9 +1,8 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ScorePoints from '../score';
 import Home from '../home';
-import { View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ShowerHead } from 'lucide-react-native';
+import { StatusBar } from 'expo-status-bar';
 
 export default function Router() {
 
@@ -11,9 +10,10 @@ export default function Router() {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
+            <StatusBar style="light" backgroundColor='#1E1E1E' />
             <Stack.Navigator initialRouteName='Home' screenOptions={{ headerShown: false }}>
-                <Stack.Screen name='Home' component={Home} />
-                <Stack.Screen name='Score' component={ScorePoints} />
+                <Stack.Screen name="Home" component={Home} />
+                <Stack.Screen name="Score" component={ScorePoints} />
             </Stack.Navigator>
         </SafeAreaView>
     )
